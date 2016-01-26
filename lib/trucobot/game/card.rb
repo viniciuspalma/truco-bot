@@ -11,6 +11,26 @@ module TrucoBot
         @rank = rank
         @suit = suit
       end
+
+      def to_sym
+        "#{@rank}_#{@suit}".to_sym
+      end
+
+      def is_club?
+        @suit == :clubs
+      end
+
+      def is_gold?
+        @suit == :golds
+      end
+
+      def is_cup?
+        @suit == :cups
+      end
+
+      def is_sword?
+        @suit == :swords
+      end
     end
   end
 end
