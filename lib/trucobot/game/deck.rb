@@ -1,11 +1,14 @@
 module TrucoBot
   module Game
     class Deck
-      attr_accessor :cards
+      attr_reader :cards
 
       def initialize
-        @cards = []
-        build_deck
+        @cards = build_deck
+      end
+
+      def hand_out
+        @cards.shuffle!.pop
       end
 
       private
@@ -13,11 +16,7 @@ module TrucoBot
         suits = TrucoBot::Game::Card::SUITS
         ranks = TrucoBot::Game::Card::RANKS
 
-        suits.each do |suit|
-          ranks.each do |rank|
-            @cards.push TrucoBot::Game::Card.new(rank, suit)
-          end
-        end
+        suits.product(ranks).map { |suit, rank| Card.new(rank, suit) }
       end
     end
   end
