@@ -31,6 +31,10 @@ module TrucoBot
       def is_sword?
         @suit == :swords
       end
+
+      def <=>(card)
+        RANKS.find_index(self.rank) <=> RANKS.find_index(card.rank)
+      end
     end
   end
 end
