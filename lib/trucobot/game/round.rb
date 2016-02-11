@@ -6,7 +6,7 @@ module TrucoBot
       end
 
       def winner
-        EvaluateRound.call @plays
+        EvaluateRound.new(@plays).call
       end
     end
   end
