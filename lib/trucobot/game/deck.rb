@@ -13,8 +13,8 @@ module TrucoBot
 
       private
       def build_deck
-        suits = TrucoBot::Game::Card::SUITS
-        ranks = TrucoBot::Game::Card::RANKS
+        suits = Card::SUITS
+        ranks = Card::RANKS
 
         suits.product(ranks).map { |suit, rank| Card.new(rank, suit) }
       end
