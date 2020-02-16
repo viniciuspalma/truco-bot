@@ -12,8 +12,8 @@ Gem::Specification.new do |spec|
   spec.authors       = %(Vinícius Palma)
   spec.email         = %(viniwpalma@gmail.com)
 
-  spec.summary       = 'TODO: Write a short summary, because Rubygems requires one.'
-  spec.description   = 'TODO: Write a longer description or delete this line.'
+  spec.summary       = 'Write a short summary, because Rubygems requires one.'
+  spec.description   = 'Write a longer description or delete this line.'
   spec.homepage      = 'https://github.com/viniciuspalma/truco-bot'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
