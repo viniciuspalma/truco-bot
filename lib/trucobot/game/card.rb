@@ -24,7 +24,7 @@ module TrucoBot
       }.freeze
 
       def initialize(rank:, suit:)
-        raise ArgumentError, "invalid rank: #{rank.inspect}" unless RANKS.include?(rank)
+        raise ArgumentError, "invalid rank: #{rank.inspect}" unless rank.is_a?(Integer) && RANKS.include?(rank)
         raise ArgumentError, "invalid suit: #{suit.inspect}" unless SUITS.include?(suit)
 
         super

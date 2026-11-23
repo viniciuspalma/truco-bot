@@ -128,7 +128,23 @@ RSpec.describe TrucoBot::Game::Match do
     end
   end
 
+  it 'keeps its state when dealing the next hand fails' do
+    failing = described_class.new(players: [alice, bob], deal: lambda { |order|
+      raise 'deck jammed' if deals.size == 1
+
+      deal.call(order)
+    })
+    expect { failing.act(alice, :al_mazo) }.to raise_error(RuntimeError, 'deck jammed')
+    expect([failing.hand_number, failing.dealer]).to eq([1, bob])
+  end
+
   describe 'events' do
+    it 'keeps event details read-only' do
+      match.act(alice, :truco)
+      match.act(bob, :no_quiero)
+      expect(match.events.map(&:details)).to all(be_frozen)
+    end
+
     it 'narrates the match' do
       match.act(alice, :truco)
       match.act(bob, :no_quiero)
@@ -140,12 +156,19 @@ RSpec.describe TrucoBot::Game::Match do
   # Plays random legal moves from many seeds to check that every match ends
   # and that exactly one player can move at any time.
   describe 'random play' do
+    # Far more moves than any real match to 30 needs.
+    let(:move_budget) { 2_000 }
+
     it 'always reaches a winner', :aggregate_failures do
       40.times do |seed|
         random = Random.new(seed)
         game = described_class.new(players: [alice, bob], random:, rules: rules(flor: seed.odd?))
 
+        moves = 0
         until game.finished?
+          moves += 1
+          raise "seed #{seed} did not finish within #{move_budget} moves" if moves > move_budget
+
           mover = game.actor
           expect(game.allowed_actions(game.opponent(mover))).to be_empty
           game.act(mover, game.allowed_actions(mover).sample(random:))

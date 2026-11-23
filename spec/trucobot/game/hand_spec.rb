@@ -283,6 +283,12 @@ RSpec.describe TrucoBot::Game::Hand do
         expect(action_names(hand.allowed_actions(bob))).to eq(%i[quiero no_quiero retruco])
       end
 
+      it 'leaves nothing pending if the Envido ends the match' do
+        scoreboard.add(alice, 29)
+        act(alice, :quiero)
+        expect([hand.finished?, hand.pending_call, hand.actor]).to eq([true, nil, nil])
+      end
+
       it 'lets the Truco be declined afterwards' do
         act(alice, :quiero)
         act(bob, :no_quiero)

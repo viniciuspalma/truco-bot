@@ -46,7 +46,8 @@ module TrucoBot
 
       # The call waiting for an answer, if any: :envido, :flor or :truco.
       def pending_call
-        if @envido then :envido
+        if finished? then nil
+        elsif @envido then :envido
         elsif @flor then :flor
         elsif @truco.pending? then :truco
         end

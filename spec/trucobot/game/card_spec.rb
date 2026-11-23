@@ -6,6 +6,10 @@ RSpec.describe TrucoBot::Game::Card do
       expect { card(8, :golds) }.to raise_error(ArgumentError, /rank/)
     end
 
+    it 'rejects ranks that are not integers' do
+      expect { card(7.0, :swords) }.to raise_error(ArgumentError, /rank/)
+    end
+
     it 'rejects unknown suits' do
       expect { card(1, :hearts) }.to raise_error(ArgumentError, /suit/)
     end

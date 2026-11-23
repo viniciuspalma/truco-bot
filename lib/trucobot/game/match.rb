@@ -75,19 +75,20 @@ module TrucoBot
         if finished?
           record(:match_won, winner, scores: scoreboard.to_h)
         elsif hand.finished?
-          @dealer = opponent(dealer)
-          start_hand
+          start_hand(dealer: opponent(dealer))
         end
       end
 
-      def start_hand
-        @hand_number += 1
+      # Deals before touching any state, so a failing `deal` leaves the match
+      # as it was.
+      def start_hand(dealer: @dealer)
         mano = opponent(dealer)
         order = [mano, dealer]
-        @hand = Hand.new(
-          players: order, mano:, cards: @deal.call(order),
-          rules:, scoreboard:, events:
-        )
+        cards = @deal.call(order)
+
+        @dealer = dealer
+        @hand_number += 1
+        @hand = Hand.new(players: order, mano:, cards:, rules:, scoreboard:, events:)
         record(:hand_started, mano, number: hand_number, dealer:)
       end
 
