@@ -1,27 +1,15 @@
+# frozen_string_literal: true
+
 module TrucoBot
   module Game
+    Player = Data.define(:id, :name)
+
+    # Who is playing. `id` is whatever identifies them to the caller, such as
+    # a Slack user id; the engine only compares players for equality.
     class Player
-      attr_reader :hand
+      def initialize(id:, name: id.to_s) = super
 
-      def initialize(username)
-        @username = username
-        @hand = []
-      end
-
-      def receive_card(card)
-        return unless @hand.size <3
-        @hand.push(card)
-      end
-
-      def pick_card(card_position)
-        return unless card_position <3
-        @hand.push @hand.delete_at(card_position)
-      end
-
-      def use_card
-        return if @hand.empty?
-        @hand.pop
-      end
+      def to_s = name
     end
   end
 end

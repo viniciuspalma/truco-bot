@@ -1,0 +1,40 @@
+plugins:
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 4.0
+  NewCops: enable
+  Exclude:
+    - .gems/**/*
+    - vendor/**/*
+
+Style/Documentation:
+  Exclude:
+    - spec/**/*
+
+RSpec/MultipleExpectations:
+  Max: 4
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/NestedGroups:
+  Max: 4
+
+Naming/FileName:
+  Exclude:
+    - lib/truco-bot.rb # matches the gem name so Bundler can require it
+
+Metrics/AbcSize:
+  Max: 22
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+RSpec/SpecFilePathFormat:
+  CustomTransform:
+    TrucoBot: trucobot

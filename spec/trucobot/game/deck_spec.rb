@@ -1,37 +1,53 @@
-require 'spec_helper'
+# frozen_string_literal: true
 
-describe TrucoBot::Game::Deck do
-  describe '#cards' do
-    subject { described_class.new }
+RSpec.describe TrucoBot::Game::Deck do
+  subject(:deck) { described_class.new(random: Random.new(42)) }
 
-    it 'has a deck with 40 cards' do
-      expect(subject.cards.size).to eq 40
+  let(:alice) { player('alice') }
+  let(:bob) { player('bob') }
+
+  it 'holds the 40 distinct cards of the Spanish deck' do
+    expect(described_class::CARDS.size).to eq(40)
+    expect(described_class::CARDS.uniq.size).to eq(40)
+  end
+
+  it 'has ten cards of each suit' do
+    expect(described_class::CARDS.map(&:suit).tally.values).to all(eq(10))
+  end
+
+  it 'shuffles reproducibly from a seed' do
+    other = described_class.new(random: Random.new(42))
+    expect(Array.new(40) { deck.draw }).to eq(Array.new(40) { other.draw })
+  end
+
+  describe '#draw' do
+    it 'removes a card from the deck' do
+      expect { deck.draw }.to change(deck, :size).from(40).to(39)
     end
 
-    it 'has 10 cards of clubs' do
-      expect(subject.cards.count(&:is_club?)).to eq 10
-    end
-
-    it 'has 10 cards of golds' do
-      expect(subject.cards.count(&:is_gold?)).to eq 10
-    end
-
-    it 'has 10 cards of cups' do
-      expect(subject.cards.count(&:is_cup?)).to eq 10
-    end
-
-    it 'has 10 cards of swords' do
-      expect(subject.cards.count(&:is_sword?)).to eq 10
+    it 'raises once the deck is empty' do
+      40.times { deck.draw }
+      expect { deck.draw }.to raise_error(TrucoBot::Error, /empty/)
     end
   end
 
-  describe '#hand_out' do
-    subject { described_class.new }
+  describe '#deal' do
+    subject(:hands) { deck.deal([alice, bob]) }
 
-    it 'hand out a card' do
-      subject.hand_out
+    it 'gives three cards to each player' do
+      expect(hands.transform_values(&:size)).to eq(alice => 3, bob => 3)
+    end
 
-      expect(subject.cards.size).to eq 39
+    it 'deals six different cards' do
+      expect(hands.values.flatten.uniq.size).to eq(6)
+      expect(deck.size).to eq(34)
+    end
+
+    it 'deals one card at a time, starting with the first player' do
+      replay = described_class.new(random: Random.new(42))
+      order = Array.new(6) { replay.draw }
+      expect(hands[alice]).to eq(order.values_at(0, 2, 4))
+      expect(hands[bob]).to eq(order.values_at(1, 3, 5))
     end
   end
 end
