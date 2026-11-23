@@ -1,22 +1,28 @@
+# frozen_string_literal: true
+
 module TrucoBot
   module Game
+    # A shuffled 40-card Spanish deck.
     class Deck
-      attr_reader :cards
+      CARDS = Card::SUITS.product(Card::RANKS).map { |suit, rank| Card.new(rank:, suit:) }.freeze
+      HAND_SIZE = 3
 
-      def initialize
-        @cards = build_deck
+      def initialize(random: Random.new)
+        @cards = CARDS.shuffle(random:)
       end
 
-      def hand_out
-        @cards.shuffle!.pop
+      def size = @cards.size
+
+      def draw
+        @cards.pop or raise Error, 'the deck is empty'
       end
 
-      private
-      def build_deck
-        suits = Card::SUITS
-        ranks = Card::RANKS
-
-        suits.product(ranks).map { |suit, rank| Card.new(rank, suit) }
+      # Deals three cards to each player, one at a time, starting with the
+      # first player given (the mano).
+      def deal(players)
+        hands = players.to_h { |player| [player, []] }
+        HAND_SIZE.times { players.each { |player| hands[player] << draw } }
+        hands.transform_values(&:freeze)
       end
     end
   end
